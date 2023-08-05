@@ -42,15 +42,6 @@ class Settings:
         self.vscode_file_name_pattern: str = data['vscodeFileNamePattern']
         self.prosveshenie_token: str =       data['prosveshenieToken']
 
-class Avatar:
-    def __init__(self, data):
-        '''
-        User's avatar data.
-        '''
-        self.name: str =      data['name']
-        self.small_url: str = data['smallUrl']
-        self.svg_url: str =   data['svgUrl']
-
 class Course:
     def __init__(self, data):
         '''
@@ -60,12 +51,63 @@ class Course:
         self.name: str =                      data['name']
         self.display_name: str =              data['displayName']
         self.description: str =               data['description']
-        self.use_first_task: int =            data['useFirstTask']
+        # self.use_first_task: int =            NotImplemented('Unknown format')
         # self.icon =                           NotImplemented('Unknown format')
         self.gamification_enabled: int =      data['gamification']['isEnabled']
         self.gamification_level_points: int = data['gamification']['regularLevelPoints']
         self.gamification_bonus_points: int = data['gamification']['bonusLevelPoints']
         # self.gamification_characters: list =  NotImplemented('Unknown format')
+
+class UserStats:
+    def __init__(self, data):
+        '''
+        User's stats.
+        '''
+        self.liked_by_you: bool = data['isLikedByCurrentUser']
+        self.classmates: int =    data['totalClassmates']
+        self.projects: int =      data['totalProjectCount']
+        self.views: int =         data['totalProjectViews']
+        self.likes: int =         data['totalProjectLikes']
+        self.reactions: int =     data['totalReactions']
+        self.friends: int =       data['totalFriends']
+        self.followers: int =     data['totalFollowers']
+        self.following: int =     data['totalFollowing']
+        self.avatars: int =       data['totalAvatars']
+        self.avatar_items: int =  data['totalAvatarItems']
+        self.lootboxes: int =     data['totalLootboxes']
+
+class Avatar:
+    def __init__(self, data):
+        '''
+        User's avatar data.
+        '''
+        self.name: str =      data['name']
+        self.small_url: str = data['smallUrl']
+        self.svg_url: str =   data['svgUrl']
+
+    def __str__(self) -> str:
+        return self.svg_url
+
+class AvatarTemplate:
+    def __init__(self, data):
+        '''
+        Avatar preset.
+        '''
+        self.name: str =      data['name']
+        self.url: str =       data['originalUrl']
+        self.small_url: str = data['smallUrl']
+
+    def __str__(self) -> str:
+        return self.url
+
+class Avatars:
+    def __init__(self, data):
+        # self.selected =        NotImplemented('Unknown format')
+        self.available: list = [AvatarTemplate(i) for i in data['available']]
+        self.svg_url: str =    data['svgUrl']
+
+    def __str__(self) -> str:
+        return self.svg_url
 
 class SelfProfile:
     def __init__(self, data):
@@ -104,6 +146,63 @@ class SelfProfile:
 
     def __str__(self) -> str:
         return self.username
+    
+    def __int__(self) -> int:
+        return self.id
+    
+class ProfilePreview:
+    def __init__(self, data):
+        '''
+        A preview of a user.
+        '''
+        # data
+        self.dict = data
+
+        self.id: int =            data['id']
+        self.first_name: str =    data['firstName']
+        self.last_name: str =     data['lastName']
+        self.full_name: str =     data['name']
+        self.is_celebrity: bool = data['isCelebrity']
+        self.avatar: Avatar =     Avatar(data['avatar'])
+
+    def __str__(self) -> str:
+        return self.full_name
+    
+    def __int__(self) -> int:
+        return self.id
+    
+class Profile:
+    def __init__(self, data):
+        '''
+        The fetched user.
+        '''
+        # data
+        self.dict = data
+
+        self.id: int =            data['id']
+        self.first_name: str =    data['firstName']
+        self.last_name: str =     data['lastName']
+        self.full_name: str =     data['fullName']
+        self.is_celebrity: bool = data['isCelebrity']
+        self.about: str =         data['about']
+        self.course_name: str =   data['activeCourse']
+        self.city: str =          data['city']
+        self.friend_status: str = data['friendStatus'] # follow, friend or None
+        self.stats: UserStats =   UserStats(data['stats'])
+        self.avatar: Avatars =    Avatars(data['avatars'])
+        self.friends: list =      [ProfilePreview(i) for i in data['friends']]
+        self.classmates: list =   [ProfilePreview(i) for i in data['classmates']]
+
+        # date
+        date = [int(i) for i in data['updatedAt'][0:19].split('T')[0].split('-')]
+        time = [int(i) for i in data['updatedAt'][0:19].split('T')[1].split(':')]
+        self.updated_at: datetime.datetime = datetime.datetime(
+            year=date[0], month=date[1], day=date[2],
+            hour=time[0], minute=time[1], second=time[2]
+        )
+
+    def __str__(self) -> str:
+        return self.full_name
     
     def __int__(self) -> int:
         return self.id

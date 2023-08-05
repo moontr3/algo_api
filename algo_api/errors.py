@@ -7,3 +7,5 @@ class UnknownException       (DefaultException): pass
 class SessionClosed          (DefaultException): pass
 class InvalidCredentials     (DefaultException): pass
 class NotImplementedException(DefaultException): pass
+class AlreadyLoggedIn        (DefaultException): pass
+class ProfileNotFound        (DefaultException): pass

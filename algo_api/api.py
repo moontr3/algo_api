@@ -4,12 +4,16 @@ from .classes import *
 
 class Session:
     def __init__(self, login, password):
+        self.session = None
         self.login(login, password)
 
     def login(self, login, password):
         '''
-        Used to login in the system.
+        Used to login into the system.
         '''
+        if self.session != None:
+            raise AlreadyLoggedIn(f'You are already logged in!')
+
         self.login_name = login
         self.password = password
 
@@ -19,11 +23,15 @@ class Session:
             'login': self.login_name,
             'password': self.password
         })
+        
+        # successfully logged in
         if res.status_code == 200:
-            pass
+            item = res.json()['item']
+            self.id = item['studentId']
+
+        # error handling
         elif res.status_code == 400:
-            print(res.json())
-            raise InvalidCredentials('Login or password you provided are incorrect.')
+            raise InvalidCredentials('Login or password are incorrect')
         else:
             raise UnknownException(res.json())
 
@@ -59,7 +67,7 @@ class Session:
         '''
         Closes the session.
 
-        You need to `login()` in order to continue
+        You'll need to `login()` in order to continue
         using the system.
         '''
         self.session.close()
@@ -67,7 +75,11 @@ class Session:
 
 
     # actions
-    def get_profile(self):
+    def my_profile(self):
+        '''
+        Fetches and returns the profile of currently 
+        logged in user.
+        '''
         data = self.get(
             'https://learn.algoritmika.org/api/v1/profile?\
             expand=branch,settings,locations,permissions,avatar,referral,course',
@@ -75,3 +87,24 @@ class Session:
         if data.status_code != 200:
             return UnknownException(data.json())
         return SelfProfile(data.json()['data'])
+    
+    
+    def get_profile(self, id):
+        '''
+        Fetches and returns the profile of the user
+        with the passed ID.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        data = self.get(
+            f'https://learn.algoritmika.org/api/v2/community/profile/index?\
+            expand=stats,avatars&studentId={id}'
+        )
+        if data.status_code == 200:
+            if data.json()['status'] == 'error':
+                raise ProfileNotFound(f'Incorrect id value: {id}')
+            else:
+                return Profile(data.json()['data'])
+        else:
+            raise UnknownException(data.json())
