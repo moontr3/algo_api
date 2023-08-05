@@ -6,5 +6,6 @@ setup(
     description='Algoritmika Student API',
     author='moontr3',
     packages=find_packages(),
+    install_requires=['requests'],
     zip_safe=False
 )
