@@ -24,6 +24,12 @@ class Branch:
         self.site_url: str =   data['siteUrl']
         # self.chat_token =      NotImplemented('Unknown freshChatToken format')
 
+    def __str__(self) -> str:
+        return self.title
+
+    def __int__(self) -> int:
+        return self.id
+
 class Ban:
     def __init__(self, data):
         '''
@@ -31,7 +37,17 @@ class Ban:
         '''
         self.is_banned: bool = data['active']
         self.reason: str =     data['reason']
-        # self.expires_at =      NotImplemented('Unknown expiresAt format')
+
+        # date
+        if data['expiresAt'] != None:
+            date = [int(i) for i in data['expiresAt'][0:19].split('T')[0].split('-')]
+            time = [int(i) for i in data['expiresAt'][0:19].split('T')[1].split(':')]
+            self.expires_at: datetime.datetime = datetime.datetime(
+                year=date[0], month=date[1], day=date[2],
+                hour=time[0], minute=time[1], second=time[2]
+            )
+        else:
+            self.expiresAt = None
 
 class Settings:
     def __init__(self, data):
@@ -57,6 +73,9 @@ class Course:
         self.gamification_level_points: int = data['gamification']['regularLevelPoints']
         self.gamification_bonus_points: int = data['gamification']['bonusLevelPoints']
         # self.gamification_characters: list =  NotImplemented('Unknown format')
+
+    def __str__(self) -> str:
+        return self.display_name
 
 class UserStats:
     def __init__(self, data):
