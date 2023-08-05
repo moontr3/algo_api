@@ -1,10 +1,10 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='algo_api',
-    version='',
-    description='',
+    version='0.0.0',
+    description='Algoritmika Student API',
     author='moontr3',
-    packages=['api','errors','classes'],
+    packages=find_packages(),
     zip_safe=False
 )
