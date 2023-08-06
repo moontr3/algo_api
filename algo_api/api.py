@@ -87,11 +87,11 @@ class Session:
             expand=branch,settings,locations,permissions,avatar,referral,course',
         )
         if data.status_code != 200:
-            return UnknownException(data.json())
+            raise UnknownException(data.json())
         return SelfProfile(data.json()['data'])
     
     
-    def get_profile(self, id):
+    def get_profile(self, id:int):
         '''
         Fetches and returns the profile of the user
         with the passed ID.
@@ -103,10 +103,57 @@ class Session:
             f'https://learn.algoritmika.org/api/v2/community/profile/index?\
             expand=stats,avatars&studentId={id}'
         )
-        if data.status_code == 200:
-            if data.json()['status'] == 'error':
-                raise ProfileNotFound(f'Incorrect id value: {id}')
-            else:
-                return Profile(data.json()['data'])
-        else:
+        if data.status_code != 200:
             raise UnknownException(data.json())
+        return Profile(data.json()['data'])
+        
+        
+    def my_projects(self, sort=SORT_LATEST):
+        '''
+        Fetches and returns all projects of currently
+        logged in user.
+        '''
+        data = self.get(
+            f'https://learn.algoritmika.org/api/v1/projects?\
+            expand=uploads,remix&sort=-{sort}&scope=student&\
+            type=design,gamedesign,images,presentation,python,scratch,unity,video,vscode,website',
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        return [Project(i) for i in data.json()['data']['items']]
+        
+        
+    def get_projects(self, id:int, sort=SORT_LATEST):
+        '''
+        Fetches and returns all projects of the user
+        with the passed ID.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        data = self.get(
+            f'https://learn.algoritmika.org/api/v1/projects?\
+            expand=uploads,remix&sort=-{sort}&scope=universe&\
+            type=design,gamedesign,images,presentation,python,scratch,unity,video,vscode,website&\
+            studentId={id}',
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        return [Project(i) for i in data.json()['data']['items']]
+        
+        
+    def get_project(self, id:int):
+        '''
+        Fetches and returns a project with the ID
+        provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        data = self.get(
+            f'https://learn.algoritmika.org/api/v1/projects/info/{id}?\
+            expand=uploads,remix',
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        return Project(data.json()['data'])

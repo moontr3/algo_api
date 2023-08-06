@@ -1,6 +1,6 @@
-import requests
 import datetime
 from .errors import *
+from .datatypes import *
 
 class NotImplemented:
     def __init__(self, message):
@@ -9,7 +9,7 @@ class NotImplemented:
         raise NotImplementedException(self.message)
     
 
-# profiles
+# PROFILES
 
 class Branch:
     def __init__(self, data):
@@ -82,7 +82,6 @@ class UserStats:
         '''
         User's stats.
         '''
-        self.liked_by_you: bool = data['isLikedByCurrentUser']
         self.classmates: int =    data['totalClassmates']
         self.projects: int =      data['totalProjectCount']
         self.views: int =         data['totalProjectViews']
@@ -222,6 +221,118 @@ class Profile:
 
     def __str__(self) -> str:
         return self.full_name
+    
+    def __int__(self) -> int:
+        return self.id
+    
+
+# PROJECTS
+
+class PreviewImage:
+    def __init__(self, data):
+        '''
+        A preview image for a project.
+        '''
+        self.name: str =      data['name']
+        self.small_url: str = data['small']
+        self.url: str       = data['large']
+
+    def __str__(self) -> str:
+        return self.url
+    
+class Reactions:
+    def __init__(self, data):
+        self.you_placed_like: bool = REACTION_LIKE in data['my']
+        self.you_placed_love: bool = REACTION_LOVE in data['my']
+        self.you_placed_fire: bool = REACTION_FIRE in data['my']
+        self.likes: int =            data['counters'][REACTION_LIKE]\
+                                     if REACTION_LIKE in data['counters'] else 0
+        self.loves: int =            data['counters'][REACTION_LOVE]\
+                                     if REACTION_LOVE in data['counters'] else 0
+        self.fires: int =            data['counters'][REACTION_FIRE]\
+                                     if REACTION_FIRE in data['counters'] else 0
+
+class Upload:
+    def __init__(self, data):
+        self.id: int       = data['id']
+        self.filename: str = data['filename']
+        self.url: str      = 'https://learn.algoritmika.org'+data['filepath']
+
+        # date
+        date = [int(i) for i in data['createdAt'][0:19].split('T')[0].split('-')]
+        time = [int(i) for i in data['createdAt'][0:19].split('T')[1].split(':')]
+        self.created_at: datetime.datetime = datetime.datetime(
+            year=date[0], month=date[1], day=date[2],
+            hour=time[0], minute=time[1], second=time[2]
+        )
+        date = [int(i) for i in data['updatedAt'][0:19].split('T')[0].split('-')]
+        time = [int(i) for i in data['updatedAt'][0:19].split('T')[1].split(':')]
+        self.updated_at: datetime.datetime = datetime.datetime(
+            year=date[0], month=date[1], day=date[2],
+            hour=time[0], minute=time[1], second=time[2]
+        )
+
+    def __str__(self) -> str:
+        return self.url
+    
+    def __int__(self) -> int:
+        return self.id
+    
+class RemixedProject:
+    def __init__(self, data):
+        self.id: int =          data['id']
+        self.title: str =       data['title']
+        self.author_name: str = data['studentName']
+
+    def __str__(self) -> str:
+        return self.title
+    
+    def __int__(self) -> int:
+        return self.id
+
+class Project:
+    def __init__(self, data):
+        '''
+        A project.
+        '''
+        # data
+        self.dict = data
+
+        self.id: int =                          data['id']
+        self.title: str =                       data['title']
+        self.description: str =                 None if data['description'] == None\
+                                                or len(data['description']) == 0 else data['description']
+        self.type: str =                        data['type']
+        self.sharing_mode: str =                data['sharingMode'][-1]
+        self.likes: int =                       data['likesCount']
+        self.remixes: int =                     data['remixesCount']
+        self.comments: int =                    data['commentsCount']
+        self.is_deleted: bool =                 data['isDeleted'] != 0
+        self.author: ProfilePreview =           ProfilePreview(data['author'])
+        self.image: PreviewImage =              None if data['previewImages']['large'] == None\
+                                                else PreviewImage(data['previewImages'])
+        self.reactions: Reactions =             Reactions(data['reactions'])
+        self.remix_enabled: bool =              data['remix']['isRemixEnabled'] != 0
+        self.original_project: RemixedProject = None if data['remix']['originalProject'] == None\
+                                                else RemixedProject(data['remix']['originalProject'])
+        self.uploads: list =                    [Upload(i) for i in data['uploads']]
+
+        # date
+        date = [int(i) for i in data['createdAt'][0:19].split('T')[0].split('-')]
+        time = [int(i) for i in data['createdAt'][0:19].split('T')[1].split(':')]
+        self.created_at: datetime.datetime = datetime.datetime(
+            year=date[0], month=date[1], day=date[2],
+            hour=time[0], minute=time[1], second=time[2]
+        )
+        date = [int(i) for i in data['updatedAt'][0:19].split('T')[0].split('-')]
+        time = [int(i) for i in data['updatedAt'][0:19].split('T')[1].split(':')]
+        self.updated_at: datetime.datetime = datetime.datetime(
+            year=date[0], month=date[1], day=date[2],
+            hour=time[0], minute=time[1], second=time[2]
+        )
+
+    def __str__(self) -> str:
+        return self.title
     
     def __int__(self) -> int:
         return self.id
