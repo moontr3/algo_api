@@ -10,7 +10,7 @@
 ```bash
 git clone https://github.com/moontr3/algo_api.git
 cd algo_api
-pip install *
+pip install .
 ```
 
 ## Документация
