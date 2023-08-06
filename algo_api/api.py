@@ -5,6 +5,7 @@ from .classes import *
 class Session:
     def __init__(self, login, password):
         self.session = None
+        self.id = None
         self.login(login, password)
 
     def login(self, login, password):
@@ -72,6 +73,7 @@ class Session:
         '''
         self.session.close()
         self.session = None
+        self.id = None
 
 
     # actions
