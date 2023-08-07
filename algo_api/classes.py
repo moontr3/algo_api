@@ -163,7 +163,7 @@ class SelfProfile:
         # self.locations: list = NotImplemented('Unknown format')
 
     def __str__(self) -> str:
-        return self.username
+        return self.full_name
     
     def __int__(self) -> int:
         return self.id
@@ -283,6 +283,7 @@ class RemixedProject:
         self.id: int =          data['id']
         self.title: str =       data['title']
         self.author_name: str = data['studentName']
+        self.url: str =         f'https://learn.algoritmika.org/community?projectId={self.id}'
 
     def __str__(self) -> str:
         return self.title
@@ -316,6 +317,7 @@ class Project:
         self.original_project: RemixedProject = None if data['remix']['originalProject'] == None\
                                                 else RemixedProject(data['remix']['originalProject'])
         self.uploads: list =                    [Upload(i) for i in data['uploads']]
+        self.url: str =                         f'https://learn.algoritmika.org/community?projectId={self.id}'
 
         # date
         date = [int(i) for i in data['createdAt'][0:19].split('T')[0].split('-')]
