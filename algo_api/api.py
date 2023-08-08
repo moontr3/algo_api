@@ -64,6 +64,20 @@ class Session:
         else:
             raise SessionClosed('Session is closed, use login() to login')
 
+    def delete(self, *args, **kwargs) -> requests.Response:
+        '''
+        Submits a DELETE request to your endpoint using
+        the system's session.
+
+        It is not recommended to send requests to
+        third-party endpoints.
+        '''
+        if self.session != None:
+            res = self.session.delete(*args, **kwargs)
+            return res 
+        else:
+            raise SessionClosed('Session is closed, use login() to login')
+
     def close(self):
         '''
         Closes the session.
@@ -157,3 +171,103 @@ class Session:
         if data.status_code != 200:
             raise UnknownException(data.json())
         return Project(data.json()['data'])
+        
+        
+    def place_reaction(self, id:int, reaction:str):
+        '''
+        Places a reaction under a project with the
+        ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        data = self.post(
+            'https://learn.algoritmika.org/api/v2/community/reaction/add',
+            data={
+                'ownerId': id,
+                'ownerType': 'project_relation',
+                'type': reaction
+            }
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        
+        
+    def remove_reaction(self, id:int, reaction:str):
+        '''
+        Removes a reaction under a project with the
+        ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        data = self.post(
+            'https://learn.algoritmika.org/api/v2/community/reaction/remove',
+            data={
+                'ownerId': id,
+                'ownerType': 'project_relation',
+                'type': reaction
+            }
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        
+        
+    def post_comment(self, id:int, text:str, reply_to:int = None):
+        '''
+        Posts a comment under a project with the
+        ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        if reply_to == None:
+            data = {'message': text}
+        else:
+            if type(reply_to) != int:
+                raise TypeError(f'\'reply_to\' should be int')
+            data = {'message': text, 'parentCommentId': reply_to}
+        
+        data = self.post(
+            f'https://learn.algoritmika.org/api/v1/projects/comment/{id}',
+            data=data
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        return Comment(data.json()['data'])
+        
+        
+    def delete_comment(self, id:int):
+        '''
+        Posts a comment under a project with the
+        ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        data = self.delete(
+            f'https://learn.algoritmika.org/api/v1/projects/comment/{id}'
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        
+        
+    def get_comments(self, id:int, page:int = 1, per_page:int = 50):
+        '''
+        Fetches and returns all comments under the project
+        with the passed ID.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        if type(page) != int:
+            raise TypeError(f'\'page\' should be int')
+        if type(per_page) != int:
+            raise TypeError(f'\'per_page\' should be int')
+        
+        data = self.get(
+            f'https://learn.algoritmika.org/api/v1/projects/comment/{id}?\
+            page={page}&perPage={per_page}&sort=-createdAt',
+        )
+        if data.status_code != 200:
+            raise UnknownException(data.json())
+        return [Comment(i) for i in data.json()['data']['items']]

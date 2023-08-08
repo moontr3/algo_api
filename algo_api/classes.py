@@ -304,7 +304,9 @@ class Project:
         self.description: str =                 None if data['description'] == None\
                                                 or len(data['description']) == 0 else data['description']
         self.type: str =                        data['type']
-        self.sharing_mode: str =                data['sharingMode'][-1]
+        self.availability: str =                data['sharingMode']
+        if SHARING_MODE_PRIVATE in self.availability:
+            self.availability.remove(SHARING_MODE_PRIVATE)
         self.likes: int =                       data['likesCount']
         self.remixes: int =                     data['remixesCount']
         self.comments: int =                    data['commentsCount']
@@ -335,6 +337,36 @@ class Project:
 
     def __str__(self) -> str:
         return self.title
+    
+    def __int__(self) -> int:
+        return self.id
+    
+
+# comments
+
+class Comment:
+    def __init__(self, data):
+        '''
+        A comment.
+        '''
+        # data
+        self.dict = data
+
+        self.id: int =                data['id']
+        self.message: str =           data['message']
+        self.author: ProfilePreview = ProfilePreview(data['author'])
+        self.children: list =         [Comment(i) for i in data['children']]
+
+        # date
+        date = [int(i) for i in data['createdAt'][0:19].split('T')[0].split('-')]
+        time = [int(i) for i in data['createdAt'][0:19].split('T')[1].split(':')]
+        self.created_at: datetime.datetime = datetime.datetime(
+            year=date[0], month=date[1], day=date[2],
+            hour=time[0], minute=time[1], second=time[2]
+        )
+
+    def __str__(self) -> str:
+        return self.message
     
     def __int__(self) -> int:
         return self.id
