@@ -7,12 +7,10 @@
 
 ## Установка
 
-Клонируйте репозиторий и установите с помощью `pip`
+Установите с помощью `pip`
 
 ```bash
-git clone https://github.com/moontr3/algo_api.git
-cd algo_api
-pip install .
+pip install git+https://github.com/moontr3/algo_api.git
 ```
 
 ## Документация
