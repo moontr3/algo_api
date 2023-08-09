@@ -46,6 +46,8 @@ class Session:
         '''
         if self.session != None:
             res = self.session.post(*args, **kwargs)
+            if res.status_code != 200:
+                raise UnknownException(res.json())
             return res 
         else:
             raise SessionClosed('Session is closed, use login() to login')
@@ -60,6 +62,8 @@ class Session:
         '''
         if self.session != None:
             res = self.session.get(*args, **kwargs)
+            if res.status_code != 200:
+                raise UnknownException(res.json())
             return res 
         else:
             raise SessionClosed('Session is closed, use login() to login')
@@ -74,6 +78,8 @@ class Session:
         '''
         if self.session != None:
             res = self.session.delete(*args, **kwargs)
+            if res.status_code != 200:
+                raise UnknownException(res.json())
             return res 
         else:
             raise SessionClosed('Session is closed, use login() to login')
@@ -100,8 +106,6 @@ class Session:
             'https://learn.algoritmika.org/api/v1/profile?\
             expand=branch,settings,locations,permissions,avatar,referral,course',
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         return SelfProfile(data.json()['data'])
     
     
@@ -117,8 +121,6 @@ class Session:
             f'https://learn.algoritmika.org/api/v2/community/profile/index?\
             expand=stats,avatars&studentId={id}'
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         return Profile(data.json()['data'])
         
         
@@ -132,8 +134,6 @@ class Session:
             expand=uploads,remix&sort=-{sort}&scope=student&\
             type=design,gamedesign,images,presentation,python,scratch,unity,video,vscode,website',
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         return [Project(i) for i in data.json()['data']['items']]
         
         
@@ -151,8 +151,6 @@ class Session:
             type=design,gamedesign,images,presentation,python,scratch,unity,video,vscode,website&\
             studentId={id}',
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         return [Project(i) for i in data.json()['data']['items']]
         
         
@@ -168,8 +166,6 @@ class Session:
             f'https://learn.algoritmika.org/api/v1/projects/info/{id}?\
             expand=uploads,remix',
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         return Project(data.json()['data'])
         
         
@@ -181,7 +177,7 @@ class Session:
         if type(id) != int:
             raise TypeError(f'\'id\' should be int')
         
-        data = self.post(
+        self.post(
             'https://learn.algoritmika.org/api/v2/community/reaction/add',
             data={
                 'ownerId': id,
@@ -189,8 +185,6 @@ class Session:
                 'type': reaction
             }
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         
         
     def remove_reaction(self, id:int, reaction:str):
@@ -201,7 +195,7 @@ class Session:
         if type(id) != int:
             raise TypeError(f'\'id\' should be int')
         
-        data = self.post(
+        self.post(
             'https://learn.algoritmika.org/api/v2/community/reaction/remove',
             data={
                 'ownerId': id,
@@ -209,8 +203,6 @@ class Session:
                 'type': reaction
             }
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         
         
     def post_comment(self, id:int, text:str, reply_to:int = None):
@@ -232,8 +224,6 @@ class Session:
             f'https://learn.algoritmika.org/api/v1/projects/comment/{id}',
             data=data
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         return Comment(data.json()['data'])
         
         
@@ -245,11 +235,9 @@ class Session:
         if type(id) != int:
             raise TypeError(f'\'id\' should be int')
         
-        data = self.delete(
+        self.delete(
             f'https://learn.algoritmika.org/api/v1/projects/comment/{id}'
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         
         
     def get_comments(self, id:int, page:int = 1, per_page:int = 50):
@@ -268,6 +256,4 @@ class Session:
             f'https://learn.algoritmika.org/api/v1/projects/comment/{id}?\
             page={page}&perPage={per_page}&sort=-createdAt',
         )
-        if data.status_code != 200:
-            raise UnknownException(data.json())
         return [Comment(i) for i in data.json()['data']['items']]

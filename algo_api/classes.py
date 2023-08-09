@@ -151,6 +151,7 @@ class SelfProfile:
         self.settings: Settings = Settings(data['settings'])
         self.avatar: Avatar =     Avatar(data['avatar'])
         self.course: Course =     Course(data['course'])
+        self.url: str =           f'https://learn.algoritmika.org/student-profile?profileId={self.id}'
 
         # date
         date = [int(i) for i in data['birthDate'][0:10].split('-')]
@@ -182,6 +183,7 @@ class ProfilePreview:
         self.full_name: str =     data['name']
         self.is_celebrity: bool = data['isCelebrity']
         self.avatar: Avatar =     Avatar(data['avatar'])
+        self.url: str =           f'https://learn.algoritmika.org/student-profile?profileId={self.id}'
 
     def __str__(self) -> str:
         return self.full_name
@@ -210,6 +212,7 @@ class Profile:
         self.avatar: Avatars =    Avatars(data['avatars'])
         self.friends: list =      [ProfilePreview(i) for i in data['friends']]
         self.classmates: list =   [ProfilePreview(i) for i in data['classmates']]
+        self.url: str =           f'https://learn.algoritmika.org/student-profile?profileId={self.id}'
 
         # date
         date = [int(i) for i in data['updatedAt'][0:19].split('T')[0].split('-')]
