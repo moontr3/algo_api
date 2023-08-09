@@ -418,6 +418,7 @@
 | `type` | `str` | Тип/курс проекта.<br>`algo_api.TYPE_IMAGES` - картинки и гифки<br>`algo_api.TYPE_DESIGN` - дизайн<br>`algo_api.TYPE_PYTHON` - Python<br>`algo_api.TYPE_PRESENTATION` - презентация<br>`algo_api.TYPE_SCRATCH` - Scratch<br>`algo_api.TYPE_WEBSITE` - сайт<br>`algo_api.TYPE_GAMEDESIGN` - геймдизайн<br>`algo_api.TYPE_UNITY` - проект Unity<br>`algo_api.TYPE_VIDEO` - видео<br>`algo_api.TYPE_VSCODE` - проект из VSCode* |
 | `availabitily` | `list[str]` | Видимость проекта.<br>Если `algo_api.SHARING_MODE_GROUP` в списке - виден одногруппникам<br>Если `algo_api.SHARING_MODE_PUBLIC` в списке - виден в Зале Славы |
 | `likes` | `int` | Количество лайков у проекта. |
+| `views` | `int` | Количество просмотров у проекта. |
 | `remixes` | `int` | Количество ремиксов у проекта. |
 | `comments` | `int` | Количество комментариев у проекта. |
 | `is_deleted` | `bool` | Удалён ли проект. |

@@ -311,6 +311,7 @@ class Project:
         if SHARING_MODE_PRIVATE in self.availability:
             self.availability.remove(SHARING_MODE_PRIVATE)
         self.likes: int =                       data['likesCount']
+        self.views: int =                       data['viewsCount']
         self.remixes: int =                     data['remixesCount']
         self.comments: int =                    data['commentsCount']
         self.is_deleted: bool =                 data['isDeleted'] != 0
