@@ -229,8 +229,7 @@ class Session:
         
     def delete_comment(self, id:int):
         '''
-        Posts a comment under a project with the
-        ID provided.
+        Deletes a comment with the ID provided.
         '''
         if type(id) != int:
             raise TypeError(f'\'id\' should be int')
