@@ -315,6 +315,22 @@ class AnonSession:
         else:
             raise SessionClosed('Session is closed, use login() to login')
 
+    def delete(self, *args, **kwargs) -> requests.Response:
+        '''
+        Submits a DELETE request to your endpoint using
+        the system's session.
+
+        It is not recommended to send requests to
+        third-party endpoints.
+        '''
+        if self.session != None:
+            res = self.session.delete(*args, **kwargs)
+            if res.status_code != 200:
+                raise UnknownException(res.json())
+            return res 
+        else:
+            raise SessionClosed('Session is closed, use login() to login')
+
     def close(self):
         '''
         Closes the session.
