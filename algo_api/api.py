@@ -362,3 +362,36 @@ class AnonSession:
                 'type': reaction
             }
         )
+    
+    def post_comment(self, id:int, text:str, reply_to:int = None):
+        '''
+        Posts a comment under a project with the
+        ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        if reply_to == None:
+            data = {'message': text}
+        else:
+            if type(reply_to) != int:
+                raise TypeError(f'\'reply_to\' should be int')
+            data = {'message': text, 'parentCommentId': reply_to}
+        
+        data = self.post(
+            f'https://learn.algoritmika.org/api/v1/projects/comment/{id}',
+            data=data
+        )
+        return Comment(data.json()['data'])
+        
+        
+    def delete_comment(self, id:int):
+        '''
+        Deletes a comment with the ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        self.delete(
+            f'https://learn.algoritmika.org/api/v1/projects/comment/{id}'
+        )
