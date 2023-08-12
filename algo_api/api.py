@@ -256,3 +256,109 @@ class Session:
             page={page}&perPage={per_page}&sort=-createdAt',
         )
         return [Comment(i) for i in data.json()['data']['items']]
+
+
+class AnonSession:
+    def __init__(self):
+        self.session = None
+        self.login()
+
+    def login(self):
+        '''
+        Used to login into the system.
+        '''
+        if self.session != None:
+            raise AlreadyLoggedIn(f'You are already logged in!')
+
+        # logging in
+        self.session = requests.Session()
+        res = self.post("https://learn.algoritmika.org/s/auth/api/e/student/logika-promo",
+            {
+                'branchCode': "logikapromoru",
+                'guid': "bf651565-cfc5-11ed-8ea4-6cb31108b164"
+            }
+        )
+
+        # error handling
+        if res.status_code != 200:
+            raise UnknownException(res.json())
+
+    def post(self, *args, **kwargs) -> requests.Response:
+        '''
+        Submits a POST request to your endpoint using
+        the system's session.
+
+        It is not recommended to send requests to
+        third-party endpoints.
+        '''
+        if self.session != None:
+            res = self.session.post(*args, **kwargs)
+            if res.status_code != 200:
+                raise UnknownException(res.json())
+            return res 
+        else:
+            raise SessionClosed('Session is closed, use login() to login')
+
+    def get(self, *args, **kwargs) -> requests.Response:
+        '''
+        Submits a GET request to your endpoint using
+        the system's session.
+
+        It is not recommended to send requests to
+        third-party endpoints.
+        '''
+        if self.session != None:
+            res = self.session.get(*args, **kwargs)
+            if res.status_code != 200:
+                raise UnknownException(res.json())
+            return res 
+        else:
+            raise SessionClosed('Session is closed, use login() to login')
+
+    def close(self):
+        '''
+        Closes the session.
+
+        You'll need to `login()` in order to continue
+        using the system.
+        '''
+        self.session.close()
+        self.session = None
+
+
+    # actions
+
+    def place_reaction(self, id:int, reaction:str):
+        '''
+        Places a reaction under a project with the
+        ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        self.post(
+            'https://learn.algoritmika.org/api/v2/community/reaction/add',
+            data={
+                'ownerId': id,
+                'ownerType': 'project_relation',
+                'type': reaction
+            }
+        )
+        
+        
+    def remove_reaction(self, id:int, reaction:str):
+        '''
+        Removes a reaction under a project with the
+        ID provided.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        self.post(
+            'https://learn.algoritmika.org/api/v2/community/reaction/remove',
+            data={
+                'ownerId': id,
+                'ownerType': 'project_relation',
+                'type': reaction
+            }
+        )
