@@ -27,4 +27,4 @@ pip install git+https://github.com/moontr3/algo_api.git
 - [x] Проекты
 - [ ] Изменение проектов
 - [ ] Изменение профиля
-- [ ] Зал Славы
+- [x] Зал Славы
