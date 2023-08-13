@@ -1,3 +1,5 @@
 __pycache__
 algo_api.egg-info
 build
+dist
+.vscode
