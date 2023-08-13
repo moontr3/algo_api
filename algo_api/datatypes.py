@@ -32,3 +32,7 @@ EMOJI_LIKE =           ':like'
 EMOJI_REASONING =      ':reasoning'
 EMOJI_SAD =            ':sad'
 EMOJI_WOW =            ':wow'
+
+TRENDS_DAY =           'day'
+TRENDS_WEEK =          'week'
+TRENDS_MONTH =         'month'

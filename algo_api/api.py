@@ -163,6 +163,19 @@ class Session:
         return [Project(i) for i in data.json()['data']['items']]
         
         
+    def get_trending(self, interval:str):
+        '''
+        Fetches and returns all trending projects
+        with the interval provided.
+        '''
+        data = self.get(
+            f'https://learn.algoritmika.org/api/v1/projects/trends?\
+            interval={interval}&expand=remix'
+        )
+
+        return [Project(i) for i in data.json()['data']['items']]
+        
+        
     def get_project(self, id:int):
         '''
         Fetches and returns a project with the ID
