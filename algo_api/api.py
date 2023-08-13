@@ -137,20 +137,25 @@ class Session:
         return [Project(i) for i in data.json()['data']['items']]
         
         
-    def get_projects(self, id:int, sort=SORT_LATEST):
+    def get_projects(self, id:int=None, page:int=1, per_page:int=15, sort=SORT_LATEST):
         '''
         Fetches and returns all projects of the user
         with the passed ID.
         '''
-        if type(id) != int:
-            raise TypeError(f'\'id\' should be int')
-        
-        data = self.get(
-            f'https://learn.algoritmika.org/api/v1/projects?\
-            expand=uploads,remix&sort=-{sort}&scope=universe&\
-            type=design,gamedesign,images,presentation,python,scratch,unity,video,vscode,website&\
-            studentId={id}',
-        )
+        if id is None:
+            data = self.get(
+                f'https://learn.algoritmika.org/api/v1/projects?\
+                expand=uploads,remix&sort=-{sort}&scope=universe&\
+                type=design,gamedesign,images,presentation,python,scratch,unity,video,vscode,website&\
+                page={page}&perPage={per_page}',
+            )
+        else:
+            data = self.get(
+                f'https://learn.algoritmika.org/api/v1/projects?\
+                expand=uploads,remix&sort=-{sort}&scope=universe&\
+                type=design,gamedesign,images,presentation,python,scratch,unity,video,vscode,website&\
+                page={page}&perPage={per_page}&studentId={id}',
+            )
         return [Project(i) for i in data.json()['data']['items']]
         
         
