@@ -215,12 +215,15 @@ class Profile:
         self.url: str =           f'https://learn.algoritmika.org/student-profile?profileId={self.id}'
 
         # date
-        date = [int(i) for i in data['updatedAt'][0:19].split('T')[0].split('-')]
-        time = [int(i) for i in data['updatedAt'][0:19].split('T')[1].split(':')]
-        self.updated_at: datetime.datetime = datetime.datetime(
-            year=date[0], month=date[1], day=date[2],
-            hour=time[0], minute=time[1], second=time[2]
-        )
+        if data['updatedAt'] != None:
+            date = [int(i) for i in data['updatedAt'][0:19].split('T')[0].split('-')]
+            time = [int(i) for i in data['updatedAt'][0:19].split('T')[1].split(':')]
+            self.updated_at: datetime.datetime = datetime.datetime(
+                year=date[0], month=date[1], day=date[2],
+                hour=time[0], minute=time[1], second=time[2]
+            )
+        else:
+            self.updated_at = None
 
     def __str__(self) -> str:
         return self.full_name
