@@ -206,7 +206,7 @@ class Profile:
         self.is_celebrity: bool = data['isCelebrity']
         self.about: str =         data['about']
         self.course_name: str =   data['activeCourse']
-        self.city: str =          data['city']
+        self.city: str =          data['city'] if data['city'] != 'in_progress' else None
         self.friend_status: str = data['friendStatus'] # follow, friend or None
         self.stats: UserStats =   UserStats(data['stats'])
         self.avatar: Avatars =    Avatars(data['avatars'])
