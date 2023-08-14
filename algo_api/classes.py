@@ -69,7 +69,7 @@ class Course:
         self.description: str =               data['description']
         # self.use_first_task: int =            NotImplemented('Unknown format')
         # self.icon =                           NotImplemented('Unknown format')
-        self.gamification_enabled: int =      data['gamification']['isEnabled']
+        self.gamification_enabled: bool =     data['gamification']['isEnabled'] != 0
         self.gamification_level_points: int = data['gamification']['regularLevelPoints']
         self.gamification_bonus_points: int = data['gamification']['bonusLevelPoints']
         # self.gamification_characters: list =  NotImplemented('Unknown format')

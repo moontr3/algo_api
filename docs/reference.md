@@ -478,7 +478,7 @@
 | `name` | `str` | Имя курса. |
 | `display_name` | `str` | Отображаемое имя курса. |
 | `description` | `str` | Подробное описание курса. |
-| `gamification_enabled` | `int` | Включена ли геймификация.* |
+| `gamification_enabled` | `bool` | Включена ли геймификация.* |
 | `gamification_level_points` | `int` | Количество очков геймификации.* |
 | `gamification_bonus_points` | `int` | Количество бонусных очков геймификации.* |
 
