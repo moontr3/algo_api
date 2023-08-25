@@ -327,6 +327,7 @@ class Project:
                                                 else RemixedProject(data['remix']['originalProject'])
         self.uploads: list =                    [Upload(i) for i in data['uploads']]
         self.url: str =                         f'https://learn.algoritmika.org/community?projectId={self.id}'
+        self.meta: dict =                       data['meta'] if type(data['meta']) == dict else {} # that's just how they work
 
         # date
         date = [int(i) for i in data['createdAt'][0:19].split('T')[0].split('-')]
