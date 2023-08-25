@@ -8,3 +8,4 @@ class SessionClosed          (DefaultException): pass
 class InvalidCredentials     (DefaultException): pass
 class NotImplementedException(DefaultException): pass
 class AlreadyLoggedIn        (DefaultException): pass
+class InaccessableProject    (DefaultException): pass

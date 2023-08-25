@@ -279,3 +279,17 @@ class Session:
         )
         return [Comment(i) for i in data.json()['data']['items']]
     
+
+    def get_code(self, id:int) -> str:
+        '''
+        Returns code of YOUR python project
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        res = self.get(f'https://learn.algoritmika.org/api/v1/projects/info/{id}?expand=uploads%2Cvideo%2Cremix%2Ccontest')
+        if res.status_code != 200: raise InaccessableProject(res.text)
+        res = res.json()['data']
+        if res['type'] != 'python': raise TypeError('Project should be `python`')
+        res = self.get(f"https://learn.algoritmika.org/api/v1/python/open?id={res['meta']['projectId']}")
+        if res.status_code == 404: raise InaccessableProject('Project seems like not belong to you')
+        return res.json()['data']['content']
