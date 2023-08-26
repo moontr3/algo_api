@@ -287,10 +287,29 @@ class Session:
         if type(id) != int:
             raise TypeError(f'\'id\' should be int')
         
-        res = self.get(f'https://learn.algoritmika.org/api/v1/projects/info/{id}?expand=uploads%2Cvideo%2Cremix%2Ccontest')
+        res = self.get(f'https://learn.algoritmika.org/api/v1/projects/info/{id}?expand=uploads')
         res = res.json()['data']
         if res['type'] != 'python':
             raise TypeError('Project should be a `python` project.')
         
         res = self.get(f"https://learn.algoritmika.org/api/v1/python/open?id={res['meta']['projectId']}")
         return res.json()['data']['content']
+    
+
+    def change_source_code(self, id:int, code:str) -> str:
+        '''
+        Rewrites the code of your python project to
+        the new one.
+        '''
+        if type(id) != int:
+            raise TypeError(f'\'id\' should be int')
+        
+        res = self.get(f'https://learn.algoritmika.org/api/v1/projects/info/{id}?expand=uploads')
+        res = res.json()['data']
+        if res['type'] != 'python':
+            raise TypeError('Project should be a `python` project.')
+        
+        self.post(
+            f"https://learn.algoritmika.org/api/v1/python/save?id={res['meta']['projectId']}",
+            data={"content": str(code), "name": res['title']}
+        )
