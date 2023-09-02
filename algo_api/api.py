@@ -296,7 +296,7 @@ class Session:
         return res.json()['data']['content']
     
 
-    def change_source_code(self, id:int, code:str) -> str:
+    def change_source_code(self, id:int, code:str):
         '''
         Rewrites the code of your python project to
         the new one.
@@ -313,3 +313,18 @@ class Session:
             f"https://learn.algoritmika.org/api/v1/python/save?id={res['meta']['projectId']}",
             data={"content": str(code), "name": res['title']}
         )
+
+
+    def edit_project(self, id:int, title:str=None, description:str=None):
+        '''
+        Edits your project\'s title and/or description
+        '''
+        if id is not int: raise TypeError('\'id\' should be int')
+        if title is not None:
+            self.post(f'https://learn.algoritmika.org/api/v1/projects/update/{id}', data={
+                'title': str(title)
+            })
+        if description is not None:
+            self.post(f'https://learn.algoritmika.org/api/v1/projects/update/{id}', data={
+                'description': str(description)
+            })
