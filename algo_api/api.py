@@ -317,14 +317,14 @@ class Session:
 
     def edit_project(self, id:int, title:str=None, description:str=None):
         '''
-        Edits your project\'s title and/or description
+        Edits your project title and/or description
         '''
         if id is not int: raise TypeError('\'id\' should be int')
-        if title is not None:
-            self.post(f'https://learn.algoritmika.org/api/v1/projects/update/{id}', data={
-                'title': str(title)
-            })
-        if description is not None:
-            self.post(f'https://learn.algoritmika.org/api/v1/projects/update/{id}', data={
-                'description': str(description)
-            })
+        data = {}
+        if title != None:
+            data['title'] = str(title)
+        if description != None:
+            data['description'] = str(description)
+
+        if len(data) == 0: raise ValueError('Either title and/or description must be provided')
+        self.post(f'https://learn.algoritmika.org/api/v1/projects/update/{id}', data=data)
