@@ -275,7 +275,7 @@ class Session:
         
         data = self.get(
             f'https://learn.algoritmika.org/api/v1/projects/comment/{id}?\
-            page={page}&perPage={per_page}&sort=-createdAt',
+            page={page}&perPage={per_page}&sort=-id',
         )
         return [Comment(i) for i in data.json()['data']['items']]
     
