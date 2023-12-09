@@ -154,10 +154,10 @@ class SelfProfile:
         self.url: str =           f'https://learn.algoritmika.org/student-profile?profileId={self.id}'
 
         # date
-        date = [int(i) for i in data['birthDate'][0:10].split('-')]
-        self.birth_date: datetime.date = datetime.date(
+        date = [int(i) for i in data['birthDate'][0:10].split('-')] if data['birthDate'] is not None else None
+        self.birth_date: datetime.date | None = datetime.date(
             year=date[0], month=date[1], day=date[2]
-        )
+        ) if date is not None else None
 
         # not implemented
         # self.referral =        NotImplemented('Unknown format')
